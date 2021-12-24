@@ -6,8 +6,7 @@ const db = mysql.createConnection({
   database: 'employee_db'
 });
 
-
-function init() {
+function start() {
 
   inquirer
     .prompt([
@@ -50,7 +49,7 @@ function init() {
         case 'Add':
           if (addAnswer === 'department') addDepartment(addAnswer, departmentName)
           if (addAnswer === 'role') addARole(db);
-          if (addAnswer === 'employee') addEmployee()
+          if (addAnswer === 'employee') addAEmployee(db)
           break;
         case 'Add a role':
           db.query('INSERT INTO roles (name) VALUES;', (err, results) => {
@@ -102,5 +101,47 @@ function addARole(db) {
       })
     })
 };
+
+function addAEmployee() {
+    
+
+  inquirer
+    .prompt([
+      {
+        message: 'What is their first name',
+        name: 'firstName',
+      },
+      {
+        message: 'What is their last name',
+        name: 'lastName',
+      },
+      {
+        type: 'number',
+        message: 'What is their role id',
+        name: 'roleId',
+      },
+      {
+        type: 'number',
+        message: 'What is their managers id',
+        name: 'managerId',
+      }
+    ])
+    .then((answers) => {
+      const {firstName, lastName, roleId, managerId} = answers;
+
+      db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ('${firstName}' , '${lastName}' , ${roleId}, ${managerId});`, (err, results) => {
+        console.table(results);
+        init();
+      })
+    })
+};
+
+
+
+
+
+function init() {
+  start();
+}
 
 init();
